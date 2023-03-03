@@ -13,7 +13,7 @@ using WpfCronometro.Model;
 
 namespace WpfCronometro.ViewModels
 {
-    public class CronometroVM: Control
+    public class CronometroVM
        {
         public CronometroVM()
         {
