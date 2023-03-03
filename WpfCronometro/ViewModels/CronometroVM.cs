@@ -1,66 +1,65 @@
-﻿using ContaBlazor.Shared.ItemModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Telegim.Monitor.ViewModels;
 using WpfCronometro.Model;
 
 namespace WpfCronometro.ViewModels
 {
-    public class CronometroVM: inotifypropertyobject
+    public class CronometroVM: Control
        {
         public CronometroVM()
         {
+            Chronometer= new Cronometro();
+            CronometroTimer = new DispatcherTimer();
+            CronometroTimer.Interval = TimeSpan.FromSeconds(1);
+            CronometroTimer.Tick += CronometroTimer_Tick;
+            SetCommands();
         }
-        public Tiempo CurrentTime { get; set; }
-        public  Timer CronometroTimer { get; set; }
 
+       
+        public DispatcherTimer CronometroTimer { get; set; }
 
+        public Cronometro Chronometer { get; set; }
 
-        public ICommand StartCronometro
+        public ICommand StartCronometro { get; private set; }
+        public ICommand PauseCronometro { get; private set; }
+        public ICommand StopCronometro { get; private set; }
 
+        private void SetCommands()
         {
-            get { return (int)GetValue(StartCronometroProperty); }
-            set { SetValue(StartCronometroProperty, value); }
+            StartCronometro = new RelayCommand(p =>  true, p => ExecuteStartCronometro());
+            PauseCronometro = new RelayCommand(p => true, p => ExecutePauseCronometro());
+            StopCronometro = new RelayCommand(p => true, p => ExeccuteStopCronometro());
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty StartCronometroProperty =
-            DependencyProperty.Register("StartCronometro", typeof(int), typeof(CronometroVM), new PropertyMetadata(StartCronometroCall()));
+        private void ExeccuteStopCronometro()
+        {
+            CronometroTimer.Stop();
+            Chronometer.InitCurrentTime();
+        }
 
+        private void ExecutePauseCronometro()
+        {
+            CronometroTimer.Stop();
+        }
+
+        private void ExecuteStartCronometro()
+        {
+            CronometroTimer.Start();
+        }
+
+        private void CronometroTimer_Tick(object? sender, EventArgs e)
+        {
+            Chronometer.RefreshSeconds();
+        }
       
-
-        private static object StartCronometroCall()
-        {
-            throw new NotImplementedException();
-        }
-
-        //public RelayCommand StartCronometro => ExecuteStartCronometro();
-        //public RelayCommand StopCronometro => ExecuteStopCronometro();
-        //public RelayCommand PauseCronometro => ExecutePauseCronometro();
-
-        //#region "ProcedimientosPrivados"
-
-        //private RelayCommand ExecuteStopCronometro()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private RelayCommand ExecutePauseCronometro()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private RelayCommand ExecuteStartCronometro()
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //#endregion
     }
 }

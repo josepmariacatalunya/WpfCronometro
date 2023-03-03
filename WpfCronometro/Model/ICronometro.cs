@@ -2,9 +2,9 @@
 
 namespace WpfCronometro.Model
 {
-    internal interface ICronometro
+    public interface ICronometro
     {
-        TimeOnly EndTime { get; set; }
-        TimeOnly InitTime { get; set; }
+      
+        public void RefreshSeconds();
     }
 }
